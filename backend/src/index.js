@@ -9,9 +9,14 @@ const PORT = process.env.PORT || 3000;
 
 const Koa = require('koa');
 const Router = require('koa-router');
-const koa = new Koa();
+const KoaBody = require('koa-body')
+const UserController = require('./controllers/userController')
 
+
+const koa = new Koa();
 var router = new Router();
+
+
 
 //rota simples pra testar se o servidor está online
 router.get('/', async (ctx) => {
@@ -19,18 +24,22 @@ router.get('/', async (ctx) => {
 });
 
 //Uma rota de exemplo simples aqui.
-//As rotas devem ficar em arquivos separados, /src/controllers/userController.js por exemplo
-router.get('/users', async (ctx) => {
-    ctx.status = 200;
-    ctx.body = {total:0, count: 0, rows:[]}
-});
+//As rotas devem ficar em arquivos separados, /src/controllers/  por exemplo
+router.get('/users',  ctx => UserController.index(ctx));
+router.get('/user',  ctx => UserController.show(ctx));
+router.post('/user',  ctx => UserController.store(ctx));
+router.put('/user',  ctx => UserController.update(ctx));
+router.delete('/user',  ctx => UserController.destroy(ctx));
+
 
 koa
+  .use(KoaBody())
   .use(router.routes())
   .use(router.allowedMethods());
+  
 
 const server = koa.listen(PORT, () => {
-  console.log('🚀  Back-end started!');
+    console.log('🚀  Back-end started!');
 });
 
 module.exports = server;
