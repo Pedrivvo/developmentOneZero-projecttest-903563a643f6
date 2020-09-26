@@ -9,8 +9,8 @@ const PORT = process.env.PORT || 3000;
 
 const Koa = require('koa');
 const Router = require('koa-router');
-
 const koa = new Koa();
+
 var router = new Router();
 
 //rota simples pra testar se o servidor está online
@@ -29,6 +29,8 @@ koa
   .use(router.routes())
   .use(router.allowedMethods());
 
-const server = koa.listen(PORT);
+const server = koa.listen(PORT, () => {
+  console.log('🚀  Back-end started!');
+});
 
 module.exports = server;
