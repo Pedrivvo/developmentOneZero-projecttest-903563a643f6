@@ -1,0 +1,136 @@
+openapi: 3.0.0
+info:
+  title: Requests
+  contact: {}
+  version: '1.0'
+servers:
+- url: http://localhost:3000
+  variables: {}
+paths:
+  /users:
+    get:
+      tags:
+      - Misc
+      summary: List
+      description: Show all users
+      operationId: List
+      parameters: []
+      responses:
+        200:
+          description: ''
+          headers: {}
+      deprecated: false
+  /user/zedagobe:
+    get:
+      tags:
+      - Misc
+      summary: Show
+      description: Search via route parameters and show just one user
+      operationId: Show
+      parameters: []
+      responses:
+        200:
+          description: ''
+          headers: {}
+      deprecated: false
+    put:
+      tags:
+      - Misc
+      summary: Update
+      description: Update information of an user
+      operationId: Update
+      parameters: []
+      requestBody:
+        description: ''
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateRequest'
+            example:
+              nome: raupp
+              email: jose.raupp@devoz.com.br
+              idade: 12
+        required: true
+      responses:
+        200:
+          description: ''
+          headers: {}
+      deprecated: false
+    delete:
+      tags:
+      - Misc
+      summary: Destroy
+      operationId: Destroy
+      parameters: []
+      responses:
+        200:
+          description: ''
+          headers: {}
+      deprecated: false
+  /user:
+    post:
+      tags:
+      - Misc
+      summary: Store
+      description: Saves an user to the database
+      operationId: Store
+      parameters: []
+      requestBody:
+        description: ''
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/StoreRequest'
+            example:
+              nome: rauppi
+              email: jose.raupp@devoz.com.br
+              idade: 24
+        required: true
+      responses:
+        200:
+          description: ''
+          headers: {}
+      deprecated: false
+components:
+  schemas:
+    StoreRequest:
+      title: StoreRequest
+      required:
+      - nome
+      - email
+      - idade
+      type: object
+      properties:
+        nome:
+          type: string
+        email:
+          type: string
+        idade:
+          type: integer
+          format: int32
+      example:
+        nome: rauppi
+        email: jose.raupp@devoz.com.br
+        idade: 24
+    UpdateRequest:
+      title: UpdateRequest
+      required:
+      - nome
+      - email
+      - idade
+      type: object
+      properties:
+        nome:
+          type: string
+        email:
+          type: string
+        idade:
+          type: integer
+          format: int32
+      example:
+        nome: raupp
+        email: jose.raupp@devoz.com.br
+        idade: 12
+tags:
+- name: Misc
+  description: ''

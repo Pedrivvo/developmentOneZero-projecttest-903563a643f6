@@ -15,7 +15,11 @@ const chai = require('chai');
 var assert = require('chai').assert
 
 const chaiHttp = require('chai-http');
+
+
 const chaiJson = require('chai-json-schema');
+
+const { step } = require('mocha-steps');
 
 const userSchema = require('../test/models/User');
 
@@ -29,14 +33,22 @@ const expect = chai.expect;
 //Inicio dos testes
 
 //este teste é simplesmente pra enteder a usar o mocha/chai
-/*describe('Um simples conjunto de testes', function () {
-    it('deveria retornar -1 quando o valor não esta presente', function () {
-        assert.equal([1, 2, 3].indexOf(4), -1);
+//Ceritifica-se que sqlite vai estar vazio para o proximo teste
+
+describe('limpar o sqlite3',  () => {
+    it('Executando Delete All', function (done) {
+        chai.request(app)
+        .get('/clear')
+        .end(function (err, res) {
+        expect(err).to.be.null;
+        expect(res).to.have.status(204);
+        done();
+        });
     });
-});*/
+});
 
 //testes da aplicação
-describe('Testes da aplicação - Caminho perfeito',  () => {
+describe('Testes da aplicação',  () => {
     it('O servidor está online?', function (done) {
         chai.request(app)
         .get('/')
@@ -47,10 +59,12 @@ describe('Testes da aplicação - Caminho perfeito',  () => {
         });
     });
 
-    it('Deveria ser uma lista de usuários vazia', function (done) {
+
+    //Must be synchro!!!
+    it('Deveria ser uma lista de usuários vazia', () => function (done) {
         chai.request(app)
         .get('/users')
-        .end(function (err, res) {
+        .end( function (err, res) {
         expect(err).to.be.null;
         expect(res).to.have.status(200);
         expect(res.body.rows).to.eql([]);
@@ -136,8 +150,6 @@ describe('Testes da aplicação - Caminho perfeito',  () => {
         });
     });
 
-
-
     it('Não deveria criar o usuário leonor (< 18 anos)', function (done) {
         chai.request(app)
         .post('/user')
@@ -150,10 +162,6 @@ describe('Testes da aplicação - Caminho perfeito',  () => {
             done();
         });
     });
-
-
-
-
 
     //...adicionar pelo menos mais 5 usuarios. se adicionar usuario menor de idade, deve dar erro. Ps: não criar o usuario naoExiste
 
@@ -200,7 +208,9 @@ describe('Testes da aplicação - Caminho perfeito',  () => {
         });
     });
 
-    it('Deveria ser uma lista com pelo menos 5 usuarios', function (done) {
+
+    //Must be synchro!!!
+    it('Deveria ser uma lista com pelo menos 5 usuarios', () => function (done) {
         chai.request(app)
         .get('/users')
         .end(function (err, res) {
@@ -210,4 +220,4 @@ describe('Testes da aplicação - Caminho perfeito',  () => {
         done();
         });
     });
-})
+});
