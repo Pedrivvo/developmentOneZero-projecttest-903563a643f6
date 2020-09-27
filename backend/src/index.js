@@ -26,10 +26,10 @@ router.get('/', async (ctx) => {
 //Uma rota de exemplo simples aqui.
 //As rotas devem ficar em arquivos separados, /src/controllers/  por exemplo
 router.get('/users',  ctx => UserController.index(ctx));
-router.get('/user',  ctx => UserController.show(ctx));
+router.get('/user/:nome',  ctx => UserController.show(ctx));
 router.post('/user',  ctx => UserController.store(ctx));
-router.put('/user',  ctx => UserController.update(ctx));
-router.delete('/user',  ctx => UserController.destroy(ctx));
+router.put('/user/:nome',  ctx => UserController.update(ctx));
+router.delete('/user/:nome',  ctx => UserController.destroy(ctx));
 
 
 koa

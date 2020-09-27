@@ -10,47 +10,34 @@
 
 const app =  require('../src/index.js');
 
-const assert = require('assert');
-const chai = require('chai')
+const chai = require('chai');
+
+var assert = require('chai').assert
+
 const chaiHttp = require('chai-http');
 const chaiJson = require('chai-json-schema');
+
+const userSchema = require('../test/models/User');
 
 chai.use(chaiHttp);
 chai.use(chaiJson);
 
 const expect = chai.expect;
 
-//Define o minimo de campos que o usuário deve ter. Geralmente deve ser colocado em um arquivo separado
-const userSchema = {
-    title: "Schema do Usuario, define como é o usuario, linha 24 do teste",
-    type: "object",
-    required: ['nome', 'email', 'idade'],
-    properties: {
-        nome: {
-            type: 'string'
-        },
-        email: {
-            type: 'string'
-        },
-        idade: {
-            type: 'number',
-            minimum: 18
-        }
-    }
-}
+
 
 //Inicio dos testes
 
 //este teste é simplesmente pra enteder a usar o mocha/chai
-describe('Um simples conjunto de testes', function () {
+/*describe('Um simples conjunto de testes', function () {
     it('deveria retornar -1 quando o valor não esta presente', function () {
         assert.equal([1, 2, 3].indexOf(4), -1);
     });
-});
+});*/
 
 //testes da aplicação
-describe('Testes da aplicaçao',  () => {
-    it('o servidor esta online', function (done) {
+describe('Testes da aplicação - Caminho perfeito',  () => {
+    it('O servidor está online?', function (done) {
         chai.request(app)
         .get('/')
         .end(function (err, res) {
@@ -60,7 +47,7 @@ describe('Testes da aplicaçao',  () => {
         });
     });
 
-    it('deveria ser uma lista vazia de usuarios', function (done) {
+    it('Deveria ser uma lista de usuários vazia', function (done) {
         chai.request(app)
         .get('/users')
         .end(function (err, res) {
@@ -71,36 +58,123 @@ describe('Testes da aplicaçao',  () => {
         });
     });
 
-    it('deveria criar o usuario raupp', function (done) {
+    it('Deveria criar o usuário raupp', function (done) {
         chai.request(app)
         .post('/user')
-        .send({nome: "raupp", email: "jose.raupp@devoz.com.br", idade: 35})
+        .send({"nome": "raupp", "email": "jose.raupp@devoz.com.br", "idade": 35})
         .end(function (err, res) {
             expect(err).to.be.null;
-            expect(res).to.have.status(201);
+            expect(res).to.have.status(200);
+            assert.typeOf(res,'Object');
+            expect(res.body).to.eql({"nome": "raupp", "email": "jose.raupp@devoz.com.br", "idade": 35});
             done();
         });
     });
+
+    it('Deveria criar o usuário pedro', function (done) {
+        chai.request(app)
+        .post('/user')
+        .send({"nome": "pedro", "email": "pedroivomonte@gmail.com", "idade": 26})
+        .end(function (err, res) {
+            expect(err).to.be.null;
+            expect(res).to.have.status(200);
+            assert.typeOf(res,'Object');
+            expect(res.body).to.eql({"nome": "pedro", "email": "pedroivomonte@gmail.com", "idade": 26});
+            done();
+        });
+    });
+
+    it('Deveria criar o usuário zedagobe', function (done) {
+        chai.request(app)
+        .post('/user')
+        .send({"nome": "zedagobe", "email": "zedagobe@devoz.com.br", "idade": 55})
+        .end(function (err, res) {
+            expect(err).to.be.null;
+            expect(res).to.have.status(200);
+            assert.typeOf(res,'Object');
+            expect(res.body).to.eql({"nome": "zedagobe", "email": "zedagobe@devoz.com.br", "idade": 55});
+            done();
+        });
+    });
+
+    it('Deveria criar o usuário alexandre', function (done) {
+        chai.request(app)
+        .post('/user')
+        .send({"nome": "alexandre", "email": "alexandre@devoz.com.br", "idade": 32})
+        .end(function (err, res) {
+            expect(err).to.be.null;
+            expect(res).to.have.status(200);
+            assert.typeOf(res,'Object');
+            expect(res.body).to.eql({"nome": "alexandre", "email": "alexandre@devoz.com.br", "idade": 32});
+            done();
+        });
+    });
+
+    it('Deveria criar a usuária isilda', function (done) {
+        chai.request(app)
+        .post('/user')
+        .send({"nome": "isilda", "email": "isilda@devoz.com.br", "idade": 23})
+        .end(function (err, res) {
+            expect(err).to.be.null;
+            expect(res).to.have.status(200);
+            assert.typeOf(res,'Object');
+            expect(res.body).to.eql({"nome": "isilda", "email": "isilda@devoz.com.br", "idade": 23});
+            done();
+        });
+    });
+
+    it('Deveria criar a usuária rosaura', function (done) {
+        chai.request(app)
+        .post('/user')
+        .send({"nome": "rosaura", "email": "rosaura@devoz.com.br", "idade": 45})
+        .end(function (err, res) {
+            expect(err).to.be.null;
+            expect(res).to.have.status(200);
+            assert.typeOf(res,'Object');
+            expect(res.body).to.eql({"nome": "rosaura", "email": "rosaura@devoz.com.br", "idade": 45});
+            done();
+        });
+    });
+
+
+
+    it('Não deveria criar o usuário leonor (< 18 anos)', function (done) {
+        chai.request(app)
+        .post('/user')
+        .send({"nome": "leonor", "email": "leonor@devoz.com.br", "idade": 14})
+        .end(function (err, res) {
+            expect(err).to.be.null;
+            expect(res).to.have.status(400);
+            assert.typeOf(res,'Object');
+            expect(res.body).to.eql({"error":"Não é possível adicionar um usuário que seja menor de idade"});
+            done();
+        });
+    });
+
+
+
+
+
     //...adicionar pelo menos mais 5 usuarios. se adicionar usuario menor de idade, deve dar erro. Ps: não criar o usuario naoExiste
 
-    it('o usuario naoExiste não existe no sistema', function (done) {
+    it('O usuario naoExiste não existe no sistema', function (done) {
         chai.request(app)
         .get('/user/naoExiste')
-        .end(function (err, res) {
-            expect(err.response.body.error).to.be.equal('User not found'); //possivelmente forma errada de verificar a mensagem de erro
+        .end(function (err, res) {  
+            expect(err).to.be.null;
+            expect(res.body.error).to.be.eql('Usuário não encontrado'); //possivelmente forma errada de verificar a mensagem de erro
             expect(res).to.have.status(404);
-            expect(res.body).to.be.jsonSchema(userSchema);
             done();
         });
     });
 
-    it('o usuario raupp existe e é valido', function (done) {
+    it('O usuario raupp existe e é valido', function (done) {
         chai.request(app)
         .get('/user/raupp')
         .end(function (err, res) {
             expect(err).to.be.null;
             expect(res).to.have.status(200);
-            expect(res.body).to.be.jsonSchema(userSchema);
+            //expect(res.body).to.be.jsonSchema(userSchema);
             done();
         });
     });
@@ -110,24 +184,23 @@ describe('Testes da aplicaçao',  () => {
         .delete('/user/raupp')
         .end(function (err, res) {
             expect(err).to.be.null;
-            expect(res).to.have.status(200);
-            expect(res.body).to.be.jsonSchema(userSchema);
+            expect(res).to.have.status(204);
             done();
         });
     });
 
-    it('o usuario raupp não deve existir mais no sistema', function (done) {
+    it('O usuario raupp não deve existir mais no sistema', function (done) {
         chai.request(app)
         .get('/user/raupp')
         .end(function (err, res) {
             expect(err).to.be.null;
-            expect(res).to.have.status(200);
-            expect(res.body).to.be.jsonSchema(userSchema);
+            expect(res).to.have.status(404);
+            expect(res.body.error).to.be.eql('Usuário não encontrado');
             done();
         });
     });
 
-    it('deveria ser uma lista com pelomenos 5 usuarios', function (done) {
+    it('Deveria ser uma lista com pelo menos 5 usuarios', function (done) {
         chai.request(app)
         .get('/users')
         .end(function (err, res) {

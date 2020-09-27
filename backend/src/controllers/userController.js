@@ -9,7 +9,7 @@ module.exports = {
      index(ctx){ 
 
         ctx.status = 200;
-        ctx.body = {total:users.length, rows:    users}     
+        ctx.body = {total:users.length, rows: users}     
 
         return ctx.body;
     },
@@ -35,11 +35,19 @@ module.exports = {
     
     show(ctx){ 
 
-        const { nome } = ctx.query;
+    
+        const { nome } = ctx.params;
 
-        const results = nome
-        ? users.filter(user => user.nome === nome) 
-        : users;
+
+        const userIndex = users.findIndex(user => user.nome === nome);
+    
+        if(userIndex < 0){
+            ctx.status = 404;
+            ctx.body = { error : 'Usuário não encontrado' }
+            return ctx.body;
+        }
+
+        const results = users.filter(user => user.nome === nome);
  
         ctx.status = 200;
         ctx.body = results   
@@ -49,14 +57,14 @@ module.exports = {
 
     update(ctx){ 
 
-        const { nomeParam } = ctx.params;
+        const { nomeParam } = ctx.params.nome;
         const { nome, email, idade } = ctx.request.body;
     
         const userIndex = users.findIndex(user => user.nomeParam === nomeParam);
     
         if(userIndex < 0){
-            ctx.status = 400;
             ctx.body = { error : 'Usuário não encontrado' }
+            ctx.status = 404;
             return ctx.body;
         }
 
@@ -84,12 +92,12 @@ module.exports = {
     destroy(ctx){ 
 
      
-        const { nomeParam } = ctx.params;
+        const { nomeParam } = ctx.params.nome;
 
         const userIndex = users.findIndex(user => user.nomeParam === nomeParam);
     
         if(userIndex < 0){
-            ctx.status = 400;
+            ctx.status = 404;
             ctx.body = { error : 'Usuário não encontrado' }
             return ctx.body;
         }
