@@ -60,7 +60,10 @@ describe('Testes da aplicação',  () => {
     });
 
 
-    //Must be synchro!!!
+    
+    /* All must be synchro */
+
+
     it('Deveria ser uma lista de usuários vazia', () => function (done) {
         chai.request(app)
         .get('/users')
@@ -72,7 +75,7 @@ describe('Testes da aplicação',  () => {
         });
     });
 
-    it('Deveria criar o usuário raupp', function (done) {
+    it('Deveria criar o usuário raupp', () => function (done) {
         chai.request(app)
         .post('/user')
         .send({"nome": "raupp", "email": "jose.raupp@devoz.com.br", "idade": 35})
@@ -85,7 +88,7 @@ describe('Testes da aplicação',  () => {
         });
     });
 
-    it('Deveria criar o usuário pedro', function (done) {
+    it('Deveria criar o usuário pedro', () => function (done) {
         chai.request(app)
         .post('/user')
         .send({"nome": "pedro", "email": "pedroivomonte@gmail.com", "idade": 26})
@@ -98,7 +101,7 @@ describe('Testes da aplicação',  () => {
         });
     });
 
-    it('Deveria criar o usuário zedagobe', function (done) {
+    it('Deveria criar o usuário zedagobe', () => function (done) {
         chai.request(app)
         .post('/user')
         .send({"nome": "zedagobe", "email": "zedagobe@devoz.com.br", "idade": 55})
@@ -111,7 +114,7 @@ describe('Testes da aplicação',  () => {
         });
     });
 
-    it('Deveria criar o usuário alexandre', function (done) {
+    it('Deveria criar o usuário alexandre', () => function (done) {
         chai.request(app)
         .post('/user')
         .send({"nome": "alexandre", "email": "alexandre@devoz.com.br", "idade": 32})
@@ -124,7 +127,7 @@ describe('Testes da aplicação',  () => {
         });
     });
 
-    it('Deveria criar a usuária isilda', function (done) {
+    it('Deveria criar a usuária isilda', () => function (done) {
         chai.request(app)
         .post('/user')
         .send({"nome": "isilda", "email": "isilda@devoz.com.br", "idade": 23})
@@ -137,7 +140,7 @@ describe('Testes da aplicação',  () => {
         });
     });
 
-    it('Deveria criar a usuária rosaura', function (done) {
+    it('Deveria criar a usuária rosaura', () => function (done) {
         chai.request(app)
         .post('/user')
         .send({"nome": "rosaura", "email": "rosaura@devoz.com.br", "idade": 45})
@@ -150,7 +153,7 @@ describe('Testes da aplicação',  () => {
         });
     });
 
-    it('Não deveria criar o usuário leonor (< 18 anos)', function (done) {
+    it('Não deveria criar o usuário leonor (< 18 anos)', () => function (done) {
         chai.request(app)
         .post('/user')
         .send({"nome": "leonor", "email": "leonor@devoz.com.br", "idade": 14})
@@ -165,7 +168,7 @@ describe('Testes da aplicação',  () => {
 
     //...adicionar pelo menos mais 5 usuarios. se adicionar usuario menor de idade, deve dar erro. Ps: não criar o usuario naoExiste
 
-    it('O usuario naoExiste não existe no sistema', function (done) {
+    it('O usuario naoExiste não existe no sistema', () => function (done) {
         chai.request(app)
         .get('/user/naoExiste')
         .end(function (err, res) {  
@@ -176,7 +179,7 @@ describe('Testes da aplicação',  () => {
         });
     });
 
-    it('O usuario raupp existe e é valido', function (done) {
+    it('O usuario raupp existe e é valido', () => function (done) {
         chai.request(app)
         .get('/user/raupp')
         .end(function (err, res) {
@@ -187,7 +190,7 @@ describe('Testes da aplicação',  () => {
         });
     });
 
-    it('deveria excluir o usuario raupp', function (done) {
+    it('deveria excluir o usuario raupp', () => function (done) {
         chai.request(app)
         .delete('/user/raupp')
         .end(function (err, res) {
@@ -197,7 +200,7 @@ describe('Testes da aplicação',  () => {
         });
     });
 
-    it('O usuario raupp não deve existir mais no sistema', function (done) {
+    it('O usuario raupp não deve existir mais no sistema', () => function (done) {
         chai.request(app)
         .get('/user/raupp')
         .end(function (err, res) {
@@ -209,7 +212,7 @@ describe('Testes da aplicação',  () => {
     });
 
 
-    //Must be synchro!!!
+    //must be synchro
     it('Deveria ser uma lista com pelo menos 5 usuarios', () => function (done) {
         chai.request(app)
         .get('/users')
@@ -220,4 +223,205 @@ describe('Testes da aplicação',  () => {
         done();
         });
     });
+});
+
+
+describe('Bateria de testes personalizados',  () => {
+
+
+    describe('CREATE',  () => {
+
+    it('Deve retornar um bad request ao tentar CRIAR um usuário com request body vazio',  () => function (done) {
+            chai.request(app)
+            .post('/user')
+            .send({})
+            .end(function (err, res) {
+                expect(err).to.be.null;
+                expect(res).to.have.status(400);
+                assert.typeOf(res,'Object');
+                expect(res.body).to.eql({"erro": "O JSON de payload tem mais campos que o esquema permitido"});
+                done();
+            });
+        });
+
+        it('Deve retornar um bad request ao tentar CRIAR um usuário duplicado (nome já existente na base)',  () => function (done) {
+            chai.request(app)
+            .post('/user')
+            .send({"nome": "rosaura", "email": "rosaura@devoz.com.br", "idade": 45})
+            .end(function (err, res) {
+                expect(err).to.be.null;
+                expect(res).to.have.status(400);
+                assert.typeOf(res,'Object');
+                expect(res.body).to.eql({"erro": "Usuário já existe"});
+                done();
+            });
+        });
+
+        it('Deve retornar um bad request ao tentar CRIAR um usuário com um request-body com mais campos que o esquema ',  () => function (done) {
+            chai.request(app)
+            .post('/user')
+            .send({"nome": "ronivaldo", "email": "ronivaldo@devoz.com.br", "idade": 30, "rua": "seila"})
+            .end(function (err, res) {
+                expect(err).to.be.null;
+                expect(res).to.have.status(400);
+                assert.typeOf(res,'Object');
+                expect(res.body).to.eql({"erro": "O JSON de payload tem mais campos que o esquema permitido"});
+                done();
+            });
+        });
+
+        it('Deve retornar um bad request ao tentar CRIAR um usuário com um request-body com menos campos que o esquema ',  () => function (done) {
+            chai.request(app)
+            .post('/user')
+            .send({"nome": "ronivaldo", "email": "ronivaldo@devoz.com.br"})
+            .end(function (err, res) {
+                expect(err).to.be.null;
+                expect(res).to.have.status(400);
+                assert.typeOf(res,'Object');
+                expect(res.body).to.eql({"erro": "O JSON de payload tem menos campos que o esquema permitido"});
+                done();
+            });
+        });
+
+        it('Deve retornar um bad request ao tentar CRIAR um usuário com um request-body com os campos do esquema mas tipos diferentes',  () => function (done) {
+            chai.request(app)
+            .post('/user')
+            .send({"nome": "ronivaldo", "email": "ronivaldo@devoz.com.br", "idade": "Trinta e dois"})
+            .end(function (err, res) {
+                expect(err).to.be.null;
+                expect(res).to.have.status(400);
+                assert.typeOf(res,'Object');
+                expect(res.body).to.eql({"erro": "JSON Payload deve seguir o modelo -> nome:string, email:string, idade: number"});
+                done();
+            });
+        });});
+
+
+        //Update
+
+
+        describe('UPDATE',  () => {
+
+        it('Deve retornar um bad request ao tentar ATUALIZAR um usuário para uma idade menor que 18 anos',  () => function (done) {
+                chai.request(app)
+                .put('/user/zedagobe')
+                .send({"nome": "zedagobe", "email": "zedagobe@devoz.com.br", "idade": 13})
+                .end(function (err, res) {
+                    expect(err).to.be.null;
+                    expect(res).to.have.status(400);
+                    assert.typeOf(res,'Object');
+                    expect(res.body).to.eql({"erro": "Não é possível atualizar a idade de um usuário para menos de 18 anos"});
+                    done();
+                });
+        });    
+
+        it('Deve retornar um bad request ao tentar ATUALIZAR um usuário com request body vazio',  () => function (done) {
+            chai.request(app)
+            .put('/user/ronivaldo')
+            .send({})
+            .end(function (err, res) {
+                expect(err).to.be.null;
+                expect(res).to.have.status(400);
+                assert.typeOf(res,'Object');
+                expect(res.body).to.eql({"erro": "O JSON de payload tem mais campos que o esquema permitido"});
+                done();
+            });
+        });
+
+        it('Deve retornar um bad request ao tentar ATUALIZAR um usuário com um request-body com mais campos que o esquema ',  () => function (done) {
+            chai.request(app)
+            .put('/user/ronivaldo')
+            .send({"nome": "ronivaldo", "email": "ronivaldo@devoz.com.br", "idade": 30, "rua": "seila"})
+            .end(function (err, res) {
+                expect(err).to.be.null;
+                expect(res).to.have.status(400);
+                assert.typeOf(res,'Object');
+                expect(res.body).to.eql({"erro": "O JSON de payload tem mais campos que o esquema permitido"});
+                done();
+            });
+        });
+
+        it('Deve retornar um bad request ao tentar ATUALIZAR um usuário com um request-body com menos campos que o esquema ',  () => function (done) {
+            chai.request(app)
+            .put('/user/ronivaldo')
+            .send({"nome": "ronivaldo", "email": "ronivaldo@devoz.com.br"})
+            .end(function (err, res) {
+                expect(err).to.be.null;
+                expect(res).to.have.status(400);
+                assert.typeOf(res,'Object');
+                expect(res.body).to.eql({"erro": "O JSON de payload tem menos campos que o esquema permitido"});
+                done();
+            });
+        });
+
+        it('Deve retornar um bad request ao tentar ATUALIZAR um usuário com um request-body com os campos do esquema mas tipos diferentes',  () => function (done) {
+            chai.request(app)
+            .put('/user/ronivaldo')
+            .send({"nome": "ronivaldo", "email": "ronivaldo@devoz.com.br", "idade": "Trinta e dois"})
+            .end(function (err, res) {
+                expect(err).to.be.null;
+                expect(res).to.have.status(400);
+                assert.typeOf(res,'Object');
+                expect(res.body).to.eql({"erro": "JSON Payload deve seguir o modelo -> nome:string, email:string, idade: number"});
+                done();
+            });
+        });});
+
+        //Delete
+
+        describe('DELETE',  () => {
+
+        it('Deve retornar um bad request ao tentar REMOVER um usuário com request body vazio',  () => function (done) {
+            chai.request(app)
+            .delete('/user/ronivaldo')
+            .send({})
+            .end(function (err, res) {
+                expect(err).to.be.null;
+                expect(res).to.have.status(400);
+                assert.typeOf(res,'Object');
+                expect(res.body).to.eql({"erro": "O JSON de payload tem mais campos que o esquema permitido"});
+                done();
+            });
+        });
+
+        it('Deve retornar um bad request ao tentar REMOVER um usuário com um request-body com mais campos que o esquema ',  () => function (done) {
+            chai.request(app)
+            .delete('/user/ronivaldo')
+            .send({"nome": "ronivaldo", "email": "ronivaldo@devoz.com.br", "idade": 30, "rua": "seila"})
+            .end(function (err, res) {
+                expect(err).to.be.null;
+                expect(res).to.have.status(400);
+                assert.typeOf(res,'Object');
+                expect(res.body).to.eql({"erro": "O JSON de payload tem mais campos que o esquema permitido"});
+                done();
+            });
+        });
+
+        it('Deve retornar um bad request ao tentar REMOVER um usuário com um request-body com menos campos que o esquema ',  () => function (done) {
+            chai.request(app)
+            .delete('/user/ronivaldo')
+            .send({"nome": "ronivaldo", "email": "ronivaldo@devoz.com.br"})
+            .end(function (err, res) {
+                expect(err).to.be.null;
+                expect(res).to.have.status(400);
+                assert.typeOf(res,'Object');
+                expect(res.body).to.eql({"erro": "O JSON de payload tem menos campos que o esquema permitido"});
+                done();
+            });
+        });
+
+        it('Deve retornar um bad request ao tentar REMOVER um usuário com um request-body com os campos do esquema mas tipos diferentes',  () => function (done) {
+            chai.request(app)
+            .delete('/user/ronivaldo')
+            .send({"nome": "ronivaldo", "email": "ronivaldo@devoz.com.br", "idade": "Trinta e dois"})
+            .end(function (err, res) {
+                expect(err).to.be.null;
+                expect(res).to.have.status(400);
+                assert.typeOf(res,'Object');
+                expect(res.body).to.eql({"erro": "JSON Payload deve seguir o modelo -> nome:string, email:string, idade: number"});
+                done();
+            });
+        });});
+
+
 });

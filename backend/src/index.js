@@ -27,6 +27,37 @@ router.get('/', async (ctx) => {
 //As rotas devem ficar em arquivos separados, /src/controllers/  por exemplo
 
 
+// Middleware that checks integrity just for /user
+router.use('/user',async (ctx, next) => {
+  
+    //checks number
+    //Problem here we will have to send name, email and age always
+    // when creating, updating or deleting...
+    if (Object.keys(ctx.request.body).length > 3 ) {
+        ctx.status = 400
+        ctx.body = { error: "O JSON de payload tem mais campos que o esquema permitido" }
+        return 
+    }
+
+    if (Object.keys(ctx.request.body).length < 3 ) {
+      ctx.status = 400
+      ctx.body = { error: "O JSON de payload tem menos campos que o esquema permitido" }
+      return 
+    }
+
+    //types
+    if (typeof ctx.request.body.nome != "string" ||
+        typeof ctx.request.body.email != "string" ||
+        typeof ctx.request.body.idade != "number"  ) 
+    {
+      ctx.status = 400
+      ctx.body = { error: "JSON Payload deve seguir o modelo -> nome:string, email:string, idade: number" }
+      return 
+    }
+  
+  await next()
+})
+
 
 router.get('/users',  ctx => UserController.index(ctx));
 router.get('/user/:nome',  ctx => UserController.show(ctx));

@@ -24,6 +24,31 @@ module.exports = {
 
         const { nome, email, idade} = ctx.request.body;
         
+        const users = await models.Users.findOne({ where: { nome } });
+
+        if(users) {
+            ctx.status = 400;
+            ctx.body = { error : 'Usuário já existe' }
+            return ctx.body;
+        }
+        else{
+
+            if (idade <  18){
+                ctx.status = 400;
+                ctx.body = {error : "Não é possível adicionar um usuário que seja menor de idade"}   
+                return ctx.body;
+            }
+            else{
+    
+                ctx.status = 200;
+                await models.Users.create(ctx.request.body);
+                ctx.body = ctx.request.body   
+                return ctx.body;
+    
+            }
+
+        }
+
         /*Deprecated by sqlite3*/
         //const user = { nome: nome, email: email , idade: idade };
         //users.push(user);
@@ -39,19 +64,7 @@ module.exports = {
         //return ctx.body;
 
 
-        if (idade <  18){
-            ctx.status = 400;
-            ctx.body = {error : "Não é possível adicionar um usuário que seja menor de idade"}   
-            return ctx.body;
-        }
-        else{
-
-            ctx.status = 200;
-            await models.Users.create(ctx.request.body);
-            ctx.body = ctx.request.body   
-            return ctx.body;
-
-        }
+       
         
     },
     
