@@ -3,10 +3,10 @@ TEST
 
 This project is for evaluation purposes only...
 
-Creating an API with node.js, koa.js, sqlite3 and testunits for it with Mocha and Chai
+Creating an API with node.js, koa.js, sqlite3 and testunits for it with Mocha and Chai.
 
 This API can list, add, update and remove users, observing the following schema { nome: string, email: string, idade: number}
-With the business rule that users that are minors are not allowed to be inserted or updated (idade < 18) 
+With the business rule that users that are minors are not allowed to be inserted or updated (idade < 18). 
 
 PT-BR
 Considerações:
@@ -17,6 +17,6 @@ Considerações:
 
 TO-DO
 
-- Create some kind of Front-end
+- Create some kind of Front-end.
 - Change the get all users requests so it can be paginated.
-- Review how to use mocha and chai to test more thoroughly
+- Review how to use mocha and chai to test more thoroughly.
