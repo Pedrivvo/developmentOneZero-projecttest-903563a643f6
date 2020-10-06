@@ -20,4 +20,3 @@ TO-DO
 - Create some kind of Front-end.
 - Change the get all users requests so it can be paginated.
 - Review how to use mocha and chai to test more thoroughly.
-- Remove node_modules from git.
